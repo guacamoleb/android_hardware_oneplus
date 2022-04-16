@@ -34,8 +34,12 @@
 #define OP_DISPLAY_NOTIFY_PRESS 9
 #define OP_DISPLAY_SET_DIM 10
 
-#define AUTH_STATUS_PATH  "/sys/class/drm/card0-DSI-1/auth_status"
 #define POWER_STATUS_PATH "/sys/class/drm/card0-DSI-1/power_status"
+#define AUTH_STATUS_PATH   "/sys/class/drm/card0-DSI-1/auth_status"
+#define CANCEL_STATUS_PATH "/sys/class/drm/card0-DSI-1/cancel_status"
+#define POWER_STATUS_PATH  "/sys/class/drm/card0-DSI-1/power_status"
+
+int isCancelled = 0;
 
 namespace {
 
@@ -232,7 +236,7 @@ Return<RequestStatus> BiometricsFingerprint::cancel() {
     mVendorDisplayService->setMode(OP_DISPLAY_SET_DIM, 0);
     mVendorFpService->updateStatus(OP_FINISH_FP_ENROLL);
     mVendorFpService->updateStatus(OP_ENABLE_FP_LONGPRESS);
-    set(AUTH_STATUS_PATH, 2);
+    set(CANCEL_STATUS_PATH, 1);
 
     return ErrorFilter(mDevice->cancel(mDevice));
 }
@@ -262,7 +266,8 @@ Return<RequestStatus> BiometricsFingerprint::setActiveGroup(uint32_t gid,
 Return<RequestStatus> BiometricsFingerprint::authenticate(uint64_t operationId,
         uint32_t gid) {
     set(POWER_STATUS_PATH, 1);
-    if (this->isCancelled) {
+    set(CANCEL_STATUS_PATH, 0);
+    if (this->isCancelled)
         mVendorDisplayService->setMode(OP_DISPLAY_SET_DIM, 1);
         set(AUTH_STATUS_PATH, 0);
     } else {

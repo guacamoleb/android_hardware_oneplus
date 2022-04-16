@@ -5,7 +5,7 @@ cc_library_static {
         "frameworks/native/services/surfaceflinger/CompositionEngine/include",
     ],
     header_libs: [
-        "generated_kernel_headers",
+        "qti_kernel_headers",
     ],
 }
 
@@ -34,4 +34,5 @@ cc_binary {
         "vendor.oneplus.fingerprint.extension@1.0",
         "vendor.oneplus.hardware.display@1.0",
     ],
+
 }
